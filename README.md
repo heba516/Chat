@@ -1,2 +1,2 @@
 # Chat
-###chat app using Nextjs, TS, Socket io
+### chat app using Nextjs, TS, Socket io
