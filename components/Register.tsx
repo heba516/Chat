@@ -24,7 +24,7 @@ const Register = () => {
     <main className="h-screen bg-orange-100 p-4 grid place-items-center">
       <div className=" bg-white p-8 lg:pr-0 rounded-3xl overflow-hidden grid grid-cols-12 lg:gap-20 items-center justify-center w-full lg:w-fit mx-auto">
         {" "}
-        <aside className="col-span-12 lg:col-span-7">
+        <aside className="col-span-12 lg:col-span-7 text-center space-y-4">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="text-center space-y-6"
@@ -92,19 +92,19 @@ const Register = () => {
             >
               Register
             </Button>
-            <div className="p-2 mx-auto rounded-full bg-gray-100 w-fit">
-              <FcGoogle size={25} />
-            </div>
-            <p className="font-semibold text-sm">
-              Have an account ?{" "}
-              <Link
-                className="text-green-700 hover:text-green-800 uppercase underline"
-                href={"/login"}
-              >
-                Login
-              </Link>
-            </p>
           </form>
+          <div className="p-2 mx-auto rounded-full bg-gray-100 w-fit">
+            <FcGoogle size={25} />
+          </div>
+          <p className="font-semibold text-sm">
+            Have an account ?{" "}
+            <Link
+              className="text-green-700 hover:text-green-800 uppercase underline"
+              href={"/login"}
+            >
+              Login
+            </Link>
+          </p>
         </aside>
         <aside className="hidden lg:block lg:col-span-5">
           <Image src={"/signup.jpg"} width={450} height={450} alt="signup" />

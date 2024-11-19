@@ -25,7 +25,7 @@ const Login = () => {
         <aside className="hidden lg:block lg:col-span-5">
           <Image src={"/login.jpg"} width={350} height={350} alt="signup" />
         </aside>
-        <aside className="col-span-12 lg:col-span-7">
+        <aside className="col-span-12 lg:col-span-7 space-y-4 text-center">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="text-center space-y-6"
@@ -72,19 +72,19 @@ const Login = () => {
             >
               Login
             </Button>
-            <div className="p-2 mx-auto rounded-full bg-gray-100 w-fit">
-              <FcGoogle size={25} />
-            </div>
-            <p className="font-semibold text-sm">
-              Don&apos;t Have an account ?{" "}
-              <Link
-                className="text-green-700 hover:text-green-800 uppercase underline"
-                href={"/"}
-              >
-                Login
-              </Link>
-            </p>
           </form>
+          <div className="p-2 mx-auto rounded-full bg-gray-100 w-fit">
+            <FcGoogle size={25} />
+          </div>
+          <p className="font-semibold text-sm">
+            Don&apos;t Have an account ?{" "}
+            <Link
+              className="text-green-700 hover:text-green-800 uppercase underline"
+              href={"/"}
+            >
+              Login
+            </Link>
+          </p>
         </aside>
       </div>
     </main>
