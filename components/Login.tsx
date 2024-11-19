@@ -82,7 +82,7 @@ const Login = () => {
               className="text-green-700 hover:text-green-800 uppercase underline"
               href={"/"}
             >
-              Login
+              Sign up
             </Link>
           </p>
         </aside>
