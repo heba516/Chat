@@ -1,4 +1,4 @@
-import { IFormReg } from "@/interfaces";
+import { IFormLog, IFormReg } from "@/interfaces";
 import axios from "axios";
 
 const instance = axios.create({
@@ -10,7 +10,6 @@ const instance = axios.create({
 
 export async function signup(formData: IFormReg) {
   try {
-    console.log("Form data being sent to the backend:", formData);
     const response = await instance.post("/auth/register", formData);
     return response.data;
   } catch (error) {
@@ -40,6 +39,26 @@ export async function verCode(verificationCode: string) {
     return response.data;
   } catch (error) {
     console.error("Error during verification:", error);
+    throw error;
+  }
+}
+
+export async function signin(formData: IFormLog) {
+  try {
+    const response = await instance.post("/auth/login", formData);
+    return response.data;
+  } catch (error) {
+    console.error("Error during signupppp:", error);
+    throw error;
+  }
+}
+
+export async function deleteAcc() {
+  try {
+    const response = await instance.delete("/auth/");
+    return response.data;
+  } catch (error) {
+    console.error("Error during signupppp:", error);
     throw error;
   }
 }

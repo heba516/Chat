@@ -16,6 +16,7 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Chattie",
   description: "Web chat application",
+  icons: "/signup.jpg",
 };
 
 export default function RootLayout({
