@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/input-otp";
 import { verCode } from "@/app/actions/auth";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
   verificationCode: z.string().min(1, {
@@ -36,8 +37,8 @@ export function VerificationCode() {
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setIsLoading(true);
@@ -45,6 +46,7 @@ export function VerificationCode() {
       setErrorMessage(null);
       const res = await verCode(data.verificationCode);
       console.log(res.message);
+      router.push("/");
     } catch (error) {
       setErrorMessage("Invalid code, please try again.");
       console.log(error);

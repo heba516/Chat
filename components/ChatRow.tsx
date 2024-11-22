@@ -2,9 +2,15 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Ichat } from "@/interfaces";
 import { Trash } from "lucide-react";
 
-const ChatRow = ({ name }: Ichat) => {
+const ChatRow = ({
+  name,
+  ...props
+}: Ichat & React.HTMLProps<HTMLDivElement>) => {
   return (
-    <div className="p-3 flex items-center justify-between hover:bg-gray-100">
+    <div
+      className="p-3 flex items-center justify-between hover:bg-gray-100"
+      {...props}
+    >
       <div className="flex items-center space-x-4">
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
