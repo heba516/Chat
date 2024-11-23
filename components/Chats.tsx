@@ -36,7 +36,7 @@ const Chats = ({
       <Separator className="my-2" />
       <ChatRow name={"Heba Yasser"} img={""} />
       <Separator className="my-2" />
-      <ChatRow name={"Heba Yasser"} img={""} />
+      <ChatRow name={"Nashwa Ahmed"} img={""} />
     </ScrollArea>
   );
 };

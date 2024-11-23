@@ -15,7 +15,7 @@ interface Iprops {
 
 const ChatArea = ({ chat, setShowChatArea }: Iprops) => {
   return (
-    <main className="flex flex-col w-full max-h-full p-3 pb-0 bg-white rounded-2xl">
+    <main className="flex flex-col w-full h-full p-3 bg-white rounded-2xl">
       <header className="flex items-center space-x-2">
         <div className="w-full bg-white shadow-md rounded-full p-2 mb-5 flex items-center space-x-3">
           <ArrowLeft
@@ -30,7 +30,7 @@ const ChatArea = ({ chat, setShowChatArea }: Iprops) => {
         </div>
       </header>
       <div className="flex-grow overflow-hidden">
-        <ScrollArea className="h-screen px-4">
+        <ScrollArea className="h-full px-4">
           <MessageBox msgContent="Hello" side="left" />
           <MessageBox msgContent="How Are You ?" side="right" />
           <MessageBox msgContent="Hello" side="left" />
@@ -50,7 +50,7 @@ const ChatArea = ({ chat, setShowChatArea }: Iprops) => {
           <MessageBox msgContent="How Are You ?" side="right" />
         </ScrollArea>
       </div>
-      <form className="w-full bg-white shadow-md rounded-full py-2 px-5 mb-5 flex items-center space-x-2">
+      <form className="w-full bg-white shadow-md rounded-full py-2 px-5 flex items-center space-x-2">
         <Input placeholder="Write something..." className="rounded-full" />
         <Button
           type="submit"
