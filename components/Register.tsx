@@ -1,14 +1,14 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Input } from "./ui/input";
-import Link from "next/link";
-import { FcGoogle } from "react-icons/fc";
 import { Button } from "./ui/button";
-import Image from "next/image";
+import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { signup } from "@/app/actions/auth";
 import { IFormReg } from "@/interfaces";
+import { signup } from "@/app/actions/auth";
+import Link from "next/link";
+import Image from "next/image";
 
 const Register = () => {
   const {
@@ -24,6 +24,7 @@ const Register = () => {
       setIsLoading(true);
 
       const res = await signup(data);
+
       localStorage.setItem("token", res.data);
 
       router.push("/VerificationCode");
@@ -105,6 +106,7 @@ const Register = () => {
             </div>
 
             <Button
+              disabled={isLoading}
               className="w-full bg-green-700 hover:bg-green-800 uppercase rounded-xl"
               type="submit"
             >

@@ -9,6 +9,7 @@ export interface IFormLog {
 }
 
 export interface Ichat {
+  id ?: string;
   img: string;
   name: string;
 }

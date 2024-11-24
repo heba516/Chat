@@ -1,13 +1,14 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Input } from "./ui/input";
-import Link from "next/link";
-import { FcGoogle } from "react-icons/fc";
 import { Button } from "./ui/button";
-import Image from "next/image";
+import { FcGoogle } from "react-icons/fc";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IFormLog } from "@/interfaces";
 import { signin } from "@/app/actions/auth";
+import Link from "next/link";
+import Image from "next/image";
 
 const Login = () => {
   const {
@@ -17,16 +18,19 @@ const Login = () => {
   } = useForm<IFormLog>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<IFormLog> = async (data) => {
     setIsLoading(true);
     try {
       setErrorMessage(null);
       const res = await signin(data);
-      localStorage.setItem("token", res.data);
+      console.log(res.data.token);
+      localStorage.setItem("token", res.data.token);
+      router.push("/");
     } catch (error) {
       setErrorMessage("Invalid email or password, please try again.");
-      console.error("Error during signup:", error);
+      console.error("Error during signin:", error);
     } finally {
       setIsLoading(false);
     }
@@ -36,7 +40,13 @@ const Login = () => {
     <main className="h-screen bg-orange-100 p-4 grid place-items-center">
       <div className=" bg-white p-6 lg:p-0 lg:pr-8 rounded-3xl overflow-hidden grid grid-cols-12 lg:gap-20 xl:gap-28 items-center justify-center w-full lg:w-fit mx-auto">
         <aside className="hidden lg:block lg:col-span-5">
-          <Image src={"/login.jpg"} width={350} height={350} alt="signup" />
+          <Image
+            src={"/login.jpg"}
+            width={350}
+            height={350}
+            alt="signup"
+            priority
+          />
         </aside>
         <aside className="col-span-12 lg:col-span-7 space-y-4 text-center">
           <form
@@ -84,20 +94,9 @@ const Login = () => {
             )}
 
             <Button
+              disabled={isLoading}
               className="w-full bg-green-700 hover:bg-green-800 uppercase rounded-xl"
               type="submit"
-            >
-              Sign in
-            </Button>
-          </form>
-          <div className="p-2 mx-auto rounded-full bg-gray-100 w-fit">
-            <FcGoogle size={25} />
-          </div>
-          <p className="font-semibold text-sm">
-            Don&apos;t Have an account ?{" "}
-            <Link
-              className="text-green-700 hover:text-green-800 uppercase underline"
-              href={"/register"}
             >
               {isLoading ? (
                 <svg
@@ -117,8 +116,20 @@ const Login = () => {
                   />
                 </svg>
               ) : (
-                "Sign up"
+                "Sign in"
               )}
+            </Button>
+          </form>
+          <div className="p-2 mx-auto rounded-full bg-gray-100 w-fit">
+            <FcGoogle size={25} />
+          </div>
+          <p className="font-semibold text-sm">
+            Don&apos;t Have an account ?{" "}
+            <Link
+              className="text-green-700 hover:text-green-800 uppercase underline"
+              href={"/register"}
+            >
+              Sign Up
             </Link>
           </p>
         </aside>

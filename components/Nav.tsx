@@ -1,6 +1,6 @@
 "use client";
 
-import { EllipsisVertical, LogOut, Pen, Trash } from "lucide-react";
+import { EllipsisVertical, LogOut, Pen } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -10,12 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-import { deleteAcc } from "@/app/actions/auth";
+// import { deleteAcc } from "@/app/actions/userActions";
 
 const Nav = () => {
   const router = useRouter();
   function logout() {
-    localStorage.removeItem("token");
+    localStorage.clear();
     router.push("/login");
   }
 
@@ -35,15 +35,12 @@ const Nav = () => {
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={logout}>
+          <DropdownMenuItem
+            onClick={logout}
+            className="text-red-600 hover:text-red-600"
+          >
             <LogOut />
             <span>Log out</span>
-          </DropdownMenuItem>
-
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-red-600" onClick={deleteAcc}>
-            <Trash />
-            <span>Delete Account</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
