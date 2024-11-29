@@ -1,7 +1,6 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Input, Button } from "./ui";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,6 +8,7 @@ import { IFormLog } from "@/interfaces";
 import { signin } from "@/app/actions/auth";
 import Link from "next/link";
 import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 
 const Login = () => {
   const {
@@ -20,13 +20,16 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
+  const { setRegInfo } = useAuth();
+
   const onSubmit: SubmitHandler<IFormLog> = async (data) => {
     setIsLoading(true);
     try {
       setErrorMessage(null);
       const res = await signin(data);
-      console.log(res.data.token);
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", res.data.user.token);
+
+      setRegInfo(res.data.user);
       router.push("/");
     } catch (error) {
       setErrorMessage("Invalid email or password, please try again.");

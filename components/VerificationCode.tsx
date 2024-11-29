@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,19 +11,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import {
+  Button,
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/components/ui/input-otp";
+} from "@/components/ui";
 import { verCode } from "@/app/actions/auth";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const FormSchema = z.object({
   verificationCode: z.string().min(1, {
     message: "Your code must be 6 characters.",
+  }),
+  password: z.string().min(8, {
+    message: "Min of 8 chars",
   }),
 });
 
@@ -36,6 +38,8 @@ export function VerificationCode() {
     },
   });
 
+  const { setRegInfo } = useAuth();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
@@ -46,6 +50,7 @@ export function VerificationCode() {
       setErrorMessage(null);
       const res = await verCode(data.verificationCode);
       console.log(res.message);
+      setRegInfo(res.data);
       router.push("/");
     } catch (error) {
       setErrorMessage("Invalid code, please try again.");

@@ -1,16 +1,16 @@
 "use client";
 
 import { EllipsisVertical, LogOut, Pen } from "lucide-react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
+  Avatar,
+  AvatarImage,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "./ui";
 import { useRouter } from "next/navigation";
-// import { deleteAcc } from "@/app/actions/userActions";
 
 const Nav = () => {
   const router = useRouter();

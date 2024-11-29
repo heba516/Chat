@@ -4,12 +4,13 @@ export interface IFormReg {
   password: string;
 }
 export interface IFormLog {
+  fullName: string;
   email: string;
   password: string;
 }
 
 export interface Ichat {
   id ?: string;
-  img: string;
-  name: string;
+  img?: string;
+  fullName: string;
 }

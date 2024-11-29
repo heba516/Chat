@@ -1,55 +1,119 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-
-import { ArrowLeft, SendHorizonal } from "lucide-react";
-
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { ScrollArea } from "./ui/scroll-area";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Skeleton } from "./ui/skeleton";
-
+import { io, Socket } from "socket.io-client";
+import { useAuth } from "@/context/AuthContext";
+import { getMessages, sendMsg } from "@/app/actions/userActions";
 import { Ichat } from "@/interfaces";
 import MessageBox from "./MessageBox";
-
-import useQueryData from "@/hooks/UseReactQuery";
-import { sendMsg } from "@/app/actions/userActions";
+import { ArrowLeft, SendHorizonal } from "lucide-react";
+import { Input, Button, ScrollArea, Avatar, AvatarImage } from "./ui";
 
 interface Iprops {
   chat: Ichat;
   setShowChatArea: (con: boolean) => void;
 }
+interface Imsg {
+  message: string;
+  senderId: string;
+}
 
-const Conversation = ({ chat, setShowChatArea }: Iprops) => {
-  const { handleSubmit } = useForm<{ message: string }>();
+interface MyEvents {
+  message: (message: string) => void;
+  disconnect: () => void;
+}
 
-  const { data, isLoading } = useQueryData({
-    queryKey: ["messages", `${localStorage.getItem("userID")}`],
-    url: `/messages/${localStorage.getItem("userID")}`,
-  });
-  console.log("messages", { data });
+const Conversation = ({ setShowChatArea }: Iprops) => {
+  const { register, handleSubmit, reset } = useForm<Imsg>();
 
-  const onSubmit: SubmitHandler<{ message: string }> = async (data) => {
-    const id = localStorage.getItem("userID");
-    if (id) await sendMsg(id, data.message);
+  const [messages, setMessages] = useState<Imsg[]>([]);
+  const [socket, setSocket] = useState<Socket<MyEvents>>();
+
+  const { user, regInfo } = useAuth();
+
+  const id = localStorage.getItem("userID");
+
+  useEffect(() => {
+    if (!id) return;
+    const fetchData = async () => {
+      try {
+        const res = await getMessages(id);
+        setMessages(res);
+      } catch (error) {
+        console.error("Error fetching sidebar data:", error);
+      }
+      // finally {
+      //   setIsLoading(false);
+      // }
+    };
+    fetchData();
+
+    const socketInstance = io("http://localhost:3000");
+    setSocket(socketInstance);
+
+    socketInstance.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socketInstance.on("message", (message: string) => {
+      console.log(`Received message: ${message}`);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { message, senderId: id },
+      ]);
+    });
+
+    return () => {
+      if (socketInstance) {
+        socketInstance.disconnect();
+      }
+    };
+  }, [id]);
+
+  const onSubmit: SubmitHandler<Imsg> = async (msg) => {
+    if (id && msg.message) {
+      try {
+        const response = await sendMsg(id, msg.message);
+
+        if (socket && msg.message) {
+          socket.emit("message", msg.message);
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              message: msg.message,
+              senderId: regInfo.id,
+            },
+          ]);
+        }
+
+        reset();
+        return response;
+      } catch (error) {
+        console.error("Failed to send message:", error);
+      }
+    } else {
+      console.error("No userID found in localStorage.");
+    }
   };
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   return (
     <main className="flex flex-col h-full">
       <header className="flex items-center space-x-2">
         <div className="w-full bg-white shadow-md rounded-full p-2 mb-5 flex items-center space-x-3">
-          {isLoading ? (
-            <div className="flex items-center space-x-4 my-4">
-              <Skeleton className="h-12 w-12 rounded-full" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-[250px]" />
-              </div>
-            </div>
-          ) : (
+          {
             <>
               <ArrowLeft
                 onClick={() => {
+                  setMessages([]);
                   setShowChatArea(false);
                   localStorage.removeItem("userID");
                 }}
@@ -62,27 +126,32 @@ const Conversation = ({ chat, setShowChatArea }: Iprops) => {
                   alt="@shadcn"
                 />
               </Avatar>
-              <p className="font-semibold text-lg">{chat.name}</p>
+              <p className="font-semibold text-lg">{user.fullName}</p>
             </>
-          )}
+          }
         </div>
       </header>
       <div className="flex-grow overflow-hidden">
         <ScrollArea className="h-full px-4">
-          {isLoading ? (
-            <Skeleton className="h-8 w-[250px]" />
-          ) : (
-            data.map((msg: string) => (
-              <MessageBox key={msg} msgContent={msg} side="left" />
-            ))
-          )}
+          {messages.map((msg: Imsg, index: number) => (
+            <MessageBox
+              key={index}
+              msgContent={msg.message}
+              id={`${msg.senderId}`}
+            />
+          ))}
+          <div ref={scrollRef} />
         </ScrollArea>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full bg-white shadow-md rounded-full py-2 px-5 flex items-center space-x-2"
       >
-        <Input placeholder="Write something..." className="rounded-full" />
+        <Input
+          {...register("message")}
+          placeholder="Write something..."
+          className="rounded-full"
+        />
         <Button
           type="submit"
           size={"icon"}

@@ -3,14 +3,16 @@ import Conversation from "@/components/Conversation";
 import Sidebar from "@/components/Sidebar";
 import Nav from "@/components/Nav";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MessageSquareTextIcon } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const HomePage = () => {
-  const [queryClient] = useState(() => new QueryClient());
   const [showChatArea, setShowChatArea] = useState<boolean>(false);
+
+  const { regInfo } = useAuth();
+
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <div
         className={`${
           showChatArea && "hidden"
@@ -28,15 +30,15 @@ const HomePage = () => {
           <Conversation
             setShowChatArea={setShowChatArea}
             chat={{
-              name: "Heba Yasser",
+              fullName: `${regInfo.fullName}`,
               img: "",
-              id: "673df15c463293a44fa39df0",
+              id: `${localStorage.getItem("userID")}`,
             }}
           />
         ) : (
           <div className="h-full flex flex-col justify-center place-items-center text-center">
             <h2 className="text-3xl font-semibold text-green-700">
-              Welcome 👋 Heba
+              Welcome 👋 {regInfo.fullName}
             </h2>
             <h2 className="text-3xl font-semibold text-green-700 my-3">
               Select chat to start messaging
@@ -44,10 +46,8 @@ const HomePage = () => {
             <MessageSquareTextIcon className="h-10 w-10 text-green-700" />
           </div>
         )}
-
-        {/*  */}
       </div>
-    </QueryClientProvider>
+    </>
   );
 };
 

@@ -1,9 +1,9 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui";
 import { Ichat } from "@/interfaces";
-import { Trash } from "lucide-react";
+// import { Trash } from "lucide-react";
 
 const Chat = ({
-  name,
+  fullName: name,
   img,
   ...props
 }: Ichat & React.HTMLProps<HTMLDivElement>) => {
@@ -18,10 +18,10 @@ const Chat = ({
         </Avatar>
         <p className="text-lg">{name}</p>
       </div>
-      <Trash
+      {/* <Trash
         className="text-red-500 cursor-pointer hover:text-red-700"
         size={18}
-      />
+      /> */}
     </div>
   );
 };

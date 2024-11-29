@@ -1,7 +1,6 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
+import { Input, Button } from "./ui";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

@@ -5,6 +5,7 @@ interface Iprops {
   queryKey: string[];
   url: string;
 }
+const token = localStorage.getItem("token");
 
 const useQueryData = ({ queryKey, url }: Iprops) => {
   return useQuery({
@@ -12,17 +13,13 @@ const useQueryData = ({ queryKey, url }: Iprops) => {
     queryFn: async () => {
       try {
         const { data } = await instance.get(url);
-        console.log({ data });
-
         return data;
       } catch (error) {
         console.error("Error fetching data:", error);
         throw error;
       }
     },
-    initialData: [],
-    retry: 1,
-    refetchOnWindowFocus: false,
+    enabled: !!token,
   });
 };
 
