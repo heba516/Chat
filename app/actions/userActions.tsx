@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { instance } from "./axios";
 
 export async function sidebar() {
@@ -84,6 +85,28 @@ export async function logout(id: string) {
     return response.data;
   } catch (error) {
     console.error("Error during deleting user:", error);
+    throw error;
+  }
+}
+
+export async function deleteChat(id: string) {
+  try {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      throw new Error("No token found in localStorage.");
+    }
+
+    const response = await instance.delete(`users/contacts/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    revalidatePath("/");
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting chat:", error);
     throw error;
   }
 }

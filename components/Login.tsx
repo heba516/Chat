@@ -28,6 +28,7 @@ const Login = () => {
       setErrorMessage(null);
       const res = await signin(data);
       localStorage.setItem("token", res.data.user.token);
+      localStorage.setItem("regID", res.data.user._id);
 
       setRegInfo(res.data.user);
       router.push("/");

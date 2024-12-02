@@ -4,65 +4,68 @@ import { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { io, Socket } from "socket.io-client";
 import { useAuth } from "@/context/AuthContext";
-import { getMessages, sendMsg } from "@/app/actions/userActions";
-import { Ichat } from "@/interfaces";
+import { getMessages } from "@/app/actions/userActions";
 import MessageBox from "./MessageBox";
+import { Input, Button, ScrollArea, Avatar, AvatarImage, Skeleton } from "./ui";
 import { ArrowLeft, SendHorizonal } from "lucide-react";
-import { Input, Button, ScrollArea, Avatar, AvatarImage } from "./ui";
 
 interface Iprops {
-  chat: Ichat;
   setShowChatArea: (con: boolean) => void;
 }
+
 interface Imsg {
   message: string;
   senderId: string;
-}
-
-interface MyEvents {
-  message: (message: string) => void;
-  disconnect: () => void;
+  receiverId: string;
 }
 
 const Conversation = ({ setShowChatArea }: Iprops) => {
   const { register, handleSubmit, reset } = useForm<Imsg>();
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<Imsg[]>([]);
-  const [socket, setSocket] = useState<Socket<MyEvents>>();
+  // const [status, setStatus] = useState<string>("");
+  const [socket, setSocket] = useState<Socket>();
 
-  const { user, regInfo } = useAuth();
-
+  const { user } = useAuth();
   const id = localStorage.getItem("userID");
+  const regID = localStorage.getItem("regID");
+
+  const socketInstance = io("http://localhost:3000");
 
   useEffect(() => {
     if (!id) return;
-    const fetchData = async () => {
+    const fetchMessages = async () => {
       try {
+        setIsLoading(true);
         const res = await getMessages(id);
         setMessages(res);
       } catch (error) {
-        console.error("Error fetching sidebar data:", error);
+        console.error("Error fetching messages:", error);
+      } finally {
+        setIsLoading(false);
       }
-      // finally {
-      //   setIsLoading(false);
-      // }
     };
-    fetchData();
 
-    const socketInstance = io("http://localhost:3000");
+    fetchMessages();
+
     setSocket(socketInstance);
 
     socketInstance.on("connect", () => {
-      console.log("Connected to server");
+      console.log("Socket connected successfully:", socketInstance.id);
     });
 
-    socketInstance.on("message", (message: string) => {
-      console.log(`Received message: ${message}`);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { message, senderId: id },
-      ]);
+    socketInstance.on("new_message", (messageData: Imsg) => {
+      console.log("Msg:", messageData);
+      setMessages((prevMessages) => [...prevMessages, messageData]);
     });
+
+    // socketInstance.on("show_typing_status", () => {
+    //   setStatus("typing");
+    // });
+
+    // socketInstance.on("clear_typing_status", () => {
+    //   setStatus("");
+    // });
 
     return () => {
       if (socketInstance) {
@@ -72,23 +75,25 @@ const Conversation = ({ setShowChatArea }: Iprops) => {
   }, [id]);
 
   const onSubmit: SubmitHandler<Imsg> = async (msg) => {
-    if (id && msg.message) {
+    if (id && regID && msg.message) {
       try {
-        const response = await sendMsg(id, msg.message);
-
         if (socket && msg.message) {
-          socket.emit("message", msg.message);
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
+          try {
+            const messageData = {
               message: msg.message,
-              senderId: regInfo.id,
-            },
-          ]);
+              senderId: regID,
+              receiverId: id,
+            };
+            socketInstance.emit("message", messageData);
+            reset();
+          } catch (error) {
+            console.error("Failed to send message:", error);
+          }
+        } else {
+          console.error("Socket is not initialized or message is empty.");
         }
 
         reset();
-        return response;
       } catch (error) {
         console.error("Failed to send message:", error);
       }
@@ -98,7 +103,6 @@ const Conversation = ({ setShowChatArea }: Iprops) => {
   };
 
   const scrollRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
@@ -109,40 +113,45 @@ const Conversation = ({ setShowChatArea }: Iprops) => {
     <main className="flex flex-col h-full">
       <header className="flex items-center space-x-2">
         <div className="w-full bg-white shadow-md rounded-full p-2 mb-5 flex items-center space-x-3">
-          {
-            <>
-              <ArrowLeft
-                onClick={() => {
-                  setMessages([]);
-                  setShowChatArea(false);
-                  localStorage.removeItem("userID");
-                }}
-                className="lg:hidden mx-3 hover:animate-pulse cursor-pointer"
-                size={20}
-              />
-              <Avatar>
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-              </Avatar>
-              <p className="font-semibold text-lg">{user.fullName}</p>
-            </>
-          }
+          <ArrowLeft
+            onClick={() => {
+              setMessages([]);
+              setShowChatArea(false);
+              localStorage.removeItem("userID");
+            }}
+            className="lg:hidden mx-3 hover:animate-pulse cursor-pointer"
+            size={20}
+          />
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+          </Avatar>
+          <div>
+            <p className="font-semibold text-lg">{user.fullName}</p>
+            {/* <span>{status}</span> */}
+          </div>
         </div>
       </header>
+
       <div className="flex-grow overflow-hidden">
         <ScrollArea className="h-full px-4">
-          {messages.map((msg: Imsg, index: number) => (
-            <MessageBox
-              key={index}
-              msgContent={msg.message}
-              id={`${msg.senderId}`}
-            />
-          ))}
+          {isLoading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-10 w-[250px] rounded-full" />
+              <Skeleton className="h-10 w-[250px] rounded-full ml-auto" />
+            </div>
+          ) : (
+            messages.map((msg: Imsg, index: number) => (
+              <MessageBox
+                key={index}
+                msgContent={msg.message}
+                id={msg.senderId}
+              />
+            ))
+          )}
           <div ref={scrollRef} />
         </ScrollArea>
       </div>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="w-full bg-white shadow-md rounded-full py-2 px-5 flex items-center space-x-2"

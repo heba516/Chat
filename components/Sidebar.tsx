@@ -19,7 +19,7 @@ const Sidebar = ({
     const fetchData = async () => {
       try {
         const response = await sidebar();
-        setData(response);
+        setData(response.data);
         console.log(response);
       } catch (error) {
         console.error("Error fetching sidebar data:", error);
