@@ -23,17 +23,18 @@ const Conversation = ({ setShowChatArea }: Iprops) => {
   const { register, handleSubmit, reset } = useForm<Imsg>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [messages, setMessages] = useState<Imsg[]>([]);
-  // const [status, setStatus] = useState<string>("");
-  const [socket, setSocket] = useState<Socket>();
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   const { user } = useAuth();
-  const id = localStorage.getItem("userID");
   const regID = localStorage.getItem("regID");
-
-  const socketInstance = io("http://localhost:3000");
+  const id = localStorage.getItem("userID");
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) {
+      console.error("No userID found in localStorage.");
+      return;
+    }
+
     const fetchMessages = async () => {
       try {
         setIsLoading(true);
@@ -48,6 +49,8 @@ const Conversation = ({ setShowChatArea }: Iprops) => {
 
     fetchMessages();
 
+    const socketInstance = io("http://localhost:3000");
+
     setSocket(socketInstance);
 
     socketInstance.on("connect", () => {
@@ -55,22 +58,13 @@ const Conversation = ({ setShowChatArea }: Iprops) => {
     });
 
     socketInstance.on("new_message", (messageData: Imsg) => {
-      console.log("Msg:", messageData);
+      console.log("Received message:", messageData);
       setMessages((prevMessages) => [...prevMessages, messageData]);
     });
 
-    // socketInstance.on("show_typing_status", () => {
-    //   setStatus("typing");
-    // });
-
-    // socketInstance.on("clear_typing_status", () => {
-    //   setStatus("");
-    // });
-
     return () => {
-      if (socketInstance) {
-        socketInstance.disconnect();
-      }
+      socketInstance.disconnect();
+      console.log("Socket disconnected.");
     };
   }, [id]);
 
@@ -84,7 +78,8 @@ const Conversation = ({ setShowChatArea }: Iprops) => {
               senderId: regID,
               receiverId: id,
             };
-            socketInstance.emit("message", messageData);
+            socket.emit("message", messageData);
+            setMessages((prevMessages) => [...prevMessages, messageData]);
             reset();
           } catch (error) {
             console.error("Failed to send message:", error);
@@ -127,7 +122,6 @@ const Conversation = ({ setShowChatArea }: Iprops) => {
           </Avatar>
           <div>
             <p className="font-semibold text-lg">{user.fullName}</p>
-            {/* <span>{status}</span> */}
           </div>
         </div>
       </header>

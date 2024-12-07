@@ -1,7 +1,6 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Input, Button } from "./ui";
-import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IFormLog } from "@/interfaces";
@@ -16,8 +15,10 @@ const Login = () => {
     formState: { errors },
     handleSubmit,
   } = useForm<IFormLog>();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const router = useRouter();
 
   const { setRegInfo } = useAuth();
@@ -52,6 +53,7 @@ const Login = () => {
             priority
           />
         </aside>
+
         <aside className="col-span-12 lg:col-span-7 space-y-4 text-center">
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -60,6 +62,7 @@ const Login = () => {
             <h1 className="font-semibold text-4xl uppercase text-green-700">
               Sign in
             </h1>
+
             <div>
               <Input
                 placeholder="Email"
@@ -124,9 +127,7 @@ const Login = () => {
               )}
             </Button>
           </form>
-          <div className="p-2 mx-auto rounded-full bg-gray-100 w-fit">
-            <FcGoogle size={25} />
-          </div>
+
           <p className="font-semibold text-sm">
             Don&apos;t Have an account ?{" "}
             <Link

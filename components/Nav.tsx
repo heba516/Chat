@@ -9,6 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Input,
+  Label,
 } from "./ui";
 import { useRouter } from "next/navigation";
 
@@ -29,10 +31,13 @@ const Nav = () => {
           <EllipsisVertical className="cursor-pointer" />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 mr-5">
-          <DropdownMenuItem>
-            <Pen />
-            <span>Edit Photo</span>
-          </DropdownMenuItem>
+          <Label htmlFor="pic">
+            <DropdownMenuItem>
+              <Pen />
+              <span>Add photo</span>
+              <Input type="file" className="hidden" id="pic" />
+            </DropdownMenuItem>
+          </Label>
 
           <DropdownMenuSeparator />
           <DropdownMenuItem

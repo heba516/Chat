@@ -4,30 +4,35 @@ import Chat from "./Chat";
 import { Separator, Skeleton, ScrollArea } from "@/components/ui";
 import { sidebar } from "@/app/actions/userActions";
 import { useAuth } from "@/context/AuthContext";
+import { Ichat } from "@/interfaces";
 
 const Sidebar = ({
   setShowChatArea,
 }: {
   setShowChatArea: (con: boolean) => void;
 }) => {
-  const [data, setData] = useState<{ _id: string; fullName: string }[]>([]);
+  const [contacts, setContacts] = useState<Ichat[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const { setUser } = useAuth();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await sidebar();
-        setData(response.data);
-        console.log(response);
-      } catch (error) {
-        console.error("Error fetching sidebar data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const response = await sidebar();
+      setContacts([
+        ...response.data.map((contact: Ichat) => ({
+          ...contact,
+          img: "https://github.com/shadcn.png",
+        })),
+      ]);
+    } catch (error) {
+      console.error("Error fetching sidebar data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -44,16 +49,19 @@ const Sidebar = ({
         ))
       ) : (
         <>
-          {data.map((chat) => (
-            <React.Fragment key={chat._id}>
+          {contacts.map((contact) => (
+            <React.Fragment key={contact._id}>
               <Chat
-                id={chat._id}
-                fullName={chat.fullName}
-                img={"signup.jpg"}
-                onClick={() => {
-                  setUser({ fullName: chat.fullName });
+                user={contact}
+                setContacts={setContacts}
+                setChat={() => {
+                  setUser({
+                    fullName: contact.fullName,
+                    _id: contact._id,
+                    img: "login.jpg",
+                  });
                   setShowChatArea(true);
-                  localStorage.setItem("userID", chat._id);
+                  localStorage.setItem("userID", contact._id);
                 }}
               />
               <Separator className="my-2" />

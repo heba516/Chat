@@ -25,9 +25,6 @@ const FormSchema = z.object({
   verificationCode: z.string().min(1, {
     message: "Your code must be 6 characters.",
   }),
-  password: z.string().min(8, {
-    message: "Min of 8 chars",
-  }),
 });
 
 export function VerificationCode() {
@@ -46,7 +43,9 @@ export function VerificationCode() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setIsLoading(true);
+    console.log("verification");
     try {
+      console.log("verification");
       setErrorMessage(null);
       const res = await verCode(data.verificationCode);
       console.log(res.message);
@@ -107,6 +106,7 @@ export function VerificationCode() {
             />
 
             <Button
+              disabled={isLoading}
               className="w-full bg-green-700 hover:bg-green-800 uppercase rounded-xl"
               type="submit"
             >

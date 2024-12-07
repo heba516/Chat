@@ -1,7 +1,6 @@
 "use client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Input, Button } from "./ui";
-import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IFormReg } from "@/interfaces";
@@ -18,6 +17,7 @@ const Register = () => {
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const onSubmit: SubmitHandler<IFormReg> = async (data) => {
     try {
       setIsLoading(true);
@@ -33,6 +33,7 @@ const Register = () => {
       setIsLoading(false);
     }
   };
+
   return (
     <main className="h-screen bg-orange-100 p-4 grid place-items-center">
       <div className=" bg-white p-8 lg:pr-0 rounded-3xl overflow-hidden grid grid-cols-12 lg:gap-20 items-center justify-center w-full lg:w-fit mx-auto">
@@ -131,9 +132,7 @@ const Register = () => {
               )}
             </Button>
           </form>
-          <div className="p-2 mx-auto rounded-full bg-gray-100 w-fit">
-            <FcGoogle size={25} />
-          </div>
+
           <p className="font-semibold text-sm">
             Have an account ?{" "}
             <Link
@@ -144,6 +143,7 @@ const Register = () => {
             </Link>
           </p>
         </aside>
+
         <aside className="hidden lg:block lg:col-span-5">
           <Image src={"/signup.jpg"} width={450} height={450} alt="signup" />
         </aside>
