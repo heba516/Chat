@@ -6,13 +6,11 @@ import { Trash } from "lucide-react";
 interface IProps {
   user: Ichat;
   setContacts: React.Dispatch<React.SetStateAction<Ichat[]>>;
-  setChat: () => void;
 }
 
 const Chat = ({
   user,
   setContacts,
-  setChat,
   ...props
 }: IProps & React.HTMLProps<HTMLDivElement>) => {
   const handleDelete = async (id: string) => {
@@ -27,9 +25,19 @@ const Chat = ({
       className="cursor-pointer p-3 flex items-center justify-between hover:bg-gray-100"
       {...props}
     >
-      <div onClick={setChat} className="flex items-center flex-grow space-x-4">
+      <div className="flex items-center flex-grow space-x-4">
         <Avatar>
-          <AvatarImage src={user.img} alt="@shadcn" />
+          <AvatarImage
+            src={
+              user.profilePhoto
+                ? `http://localhost:3000/${user.profilePhoto?.replace(
+                    /\\/g,
+                    "/"
+                  )}`
+                : "profile.png"
+            }
+            alt="@shadcn"
+          />
         </Avatar>
         <p className="text-lg">{user.fullName}</p>
       </div>

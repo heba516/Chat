@@ -2,14 +2,26 @@
 import Conversation from "@/components/Conversation";
 import Sidebar from "@/components/Sidebar";
 import Nav from "@/components/Nav";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { MessageSquareTextIcon } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { Ichat } from "@/interfaces";
+// import Cookies from "js-cookie";
 
 const HomePage = () => {
   const [showChatArea, setShowChatArea] = useState<boolean>(false);
 
-  const { regInfo } = useAuth();
+  const { regInfo, setUser } = useAuth();
+
+  const handleChatSelect = useCallback((id: string, user: Ichat) => {
+    localStorage.setItem("userID", id);
+    setShowChatArea(true);
+    setUser({
+      fullName: user.fullName,
+      _id: user._id,
+      profilePhoto: user.profilePhoto,
+    });
+  }, []);
 
   return (
     <>
@@ -19,7 +31,7 @@ const HomePage = () => {
         } lg:flex flex-col w-full lg:w-2/5`}
       >
         <Nav />
-        <Sidebar setShowChatArea={setShowChatArea} />
+        <Sidebar onChatSelect={handleChatSelect} />
       </div>
 
       <div

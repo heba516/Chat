@@ -6,8 +6,8 @@ import { Ichat } from "@/interfaces";
 interface AuthContextType {
   user: Ichat;
   setUser: (data: Ichat) => void;
-  regInfo: { fullName: string; id: string };
-  setRegInfo: (data: { fullName: string; id: string }) => void;
+  regInfo: Ichat;
+  setRegInfo: (data: Ichat) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -19,10 +19,15 @@ interface AuthContextProviderProps {
 const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   children,
 }) => {
-  const [user, setUser] = useState<Ichat>({ fullName: "" });
-  const [regInfo, setRegInfo] = useState<{ fullName: string; id: string }>({
+  const [user, setUser] = useState<Ichat>({
     fullName: "",
-    id: "",
+    _id: "",
+    profilePhoto: "",
+  });
+  const [regInfo, setRegInfo] = useState<Ichat>({
+    fullName: "",
+    _id: "",
+    profilePhoto: "",
   });
 
   return (

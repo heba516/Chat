@@ -11,6 +11,6 @@ export interface IFormLog {
 
 export interface Ichat {
   _id : string;
-  img?: string;
+  profilePhoto: string;
   fullName: string;
 }

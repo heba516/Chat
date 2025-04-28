@@ -1,5 +1,6 @@
 import { IFormLog, IFormReg } from "@/interfaces";
 import { instance } from "./axios";
+import Cookies from "js-cookie";
 
 export async function signup(formData: IFormReg) {
   try {
@@ -13,11 +14,11 @@ export async function signup(formData: IFormReg) {
 
 export async function verCode(verificationCode: string) {
   try {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
 
-    if (!token) {
-      throw new Error("No token found in localStorage.");
-    }
+    // if (!token) {
+    //   throw new Error("No token found in localStorage.");
+    // }
 
     const response = await instance.post(
       "/auth/verify",
@@ -39,7 +40,14 @@ export async function verCode(verificationCode: string) {
 export async function signin(formData: IFormLog) {
   try {
     const response = await instance.post("/auth/login", formData);
-    console.log(response.data);
+    console.log(response.data.data.user);
+    const res = response.data.data.user;
+    console.log(res);
+
+    Cookies.set("token", res.token, {
+      expires: 7, // مدة الكوكي (7 أيام)
+      path: "/", // متاحة في كل الموقع
+    });
 
     return response.data;
   } catch (error) {

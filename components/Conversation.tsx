@@ -118,7 +118,17 @@ const Conversation = ({ setShowChatArea }: Iprops) => {
             size={20}
           />
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarImage
+              src={
+                user.profilePhoto
+                  ? `http://localhost:3000/${user.profilePhoto?.replace(
+                      /\\/g,
+                      "/"
+                    )}`
+                  : "profile.png"
+              }
+              alt="@shadcn"
+            />
           </Avatar>
           <div>
             <p className="font-semibold text-lg">{user.fullName}</p>
