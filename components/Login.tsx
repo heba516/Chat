@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IFormLog } from "@/interfaces";
 import { signin } from "@/app/actions/auth";
+import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
-import { useAuth } from "@/context/AuthContext";
-import Cookies from "js-cookie";
 
 const Login = () => {
   const {
@@ -29,7 +28,7 @@ const Login = () => {
     try {
       setErrorMessage(null);
       const res = await signin(data);
-      Cookies.set("token", res.data.user.token);
+
       localStorage.setItem("regID", res.data.user._id);
 
       console.log(res.data.user);

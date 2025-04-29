@@ -42,11 +42,10 @@ export async function signin(formData: IFormLog) {
     const response = await instance.post("/auth/login", formData);
     console.log(response.data.data.user);
     const res = response.data.data.user;
-    console.log(res);
 
     Cookies.set("token", res.token, {
-      expires: 7, // مدة الكوكي (7 أيام)
-      path: "/", // متاحة في كل الموقع
+      expires: 7,
+      path: "/",
     });
 
     return response.data;
